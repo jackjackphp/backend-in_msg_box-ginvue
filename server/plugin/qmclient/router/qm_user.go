@@ -22,6 +22,12 @@ func (r *qmUser) Init(public *gin.RouterGroup, private *gin.RouterGroup) {
 		group.GET("findQmUser", apiQmUser.FindQmUser)
 		group.GET("getQmUserList", apiQmUser.GetQmUserList)
 		group.PUT("adminChangePassword", apiQmUser.AdminChangePassword)
-
+		group.GET("getUserInfo", apiQmUser.GetUserInfo)
 	}
+	{
+		group := public.Group("qmUser")
+		group.POST("register", apiQmUser.Register)
+		group.POST("login", apiQmUser.Login)
+	}
+
 }

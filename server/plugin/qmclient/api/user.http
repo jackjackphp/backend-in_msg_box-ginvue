@@ -1,0 +1,23 @@
+### 注册
+POST http://localhost:8888/qmUser/register
+Content-Type: application/json
+
+{
+  "username": "qimiaomiao",
+  "password": "testtest",
+  "nickname": "qimiaomiao"
+}
+
+
+### 登录
+POST http://localhost:8888/qmUser/login
+Content-Type: application/json
+
+{
+  "username": "qimiaomiao",
+  "password": "testtest"
+}
+
+### 获取用户信息
+GET http://localhost:8888/qmUser/getUserInfo
+x-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVVUlEIjoiNzAzNmYxYTUtODI4NS00YmE1LWJhOTMtNDA1MmIyNGFiYjc4IiwiSUQiOjIsIlVzZXJuYW1lIjoicWltaWFvbWlhbyIsIk5pY2tOYW1lIjoicWltaWFvbWlhbyIsIkF1dGhvcml0eUlkIjo5OTk5LCJCdWZmZXJUaW1lIjo4NjQwMCwiaXNzIjoicW1QbHVzIiwiYXVkIjpbIkdWQSJdLCJleHAiOjE3MjM3MzI0NzAsIm5iZiI6MTcyMzEyNzY3MH0.Pev9eJv1GhviyfMM9PtR6tW3yzgOT493tBPfijykeJY

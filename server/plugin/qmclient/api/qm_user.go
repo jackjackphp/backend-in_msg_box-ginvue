@@ -5,6 +5,8 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	"github.com/flipped-aurora/gin-vue-admin/server/plugin/qmclient/model"
 	"github.com/flipped-aurora/gin-vue-admin/server/plugin/qmclient/model/request"
+	"github.com/flipped-aurora/gin-vue-admin/server/plugin/qmclient/plugin"
+	"github.com/flipped-aurora/gin-vue-admin/server/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -190,4 +192,96 @@ func (a *qmUser) AdminChangePassword(c *gin.Context) {
 		return
 	}
 	response.OkWithData("返回数据", c)
+}
+
+// Register 等待开发的的用户接口
+// @Tags QmUser
+// @Summary 等待开发的的用户接口
+// @accept application/json
+// @Produce application/json
+// @Param data query request.QmUserSearch true "分页获取用户列表"
+// @Success 200 {object} response.Response{data=object,msg=string} "获取成功"
+// @Router /qmUser/register [POST]
+func (a *qmUser) Register(c *gin.Context) {
+	var registerReq request.QmUser
+	err := c.ShouldBindJSON(&registerReq)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	var user model.QmUser
+	user.Username = registerReq.Username
+	user.Password = registerReq.Password
+	user.Nickname = registerReq.Nickname
+	user.AuthorityId = plugin.Config.AuthorityID
+
+	// 请添加自己的业务逻辑
+	err = serviceQmUser.CreateQmUser(&user)
+	if err != nil {
+		global.GVA_LOG.Error("注册失败!", zap.Error(err))
+		response.FailWithMessage("注册失败:"+err.Error(), c)
+		return
+	}
+	response.OkWithData("注册成功", c)
+}
+
+// Login 等待开发的的用户接口
+// @Tags QmUser
+// @Summary 等待开发的的用户接口
+// @accept application/json
+// @Produce application/json
+// @Param data query request.QmUserSearch true "分页获取用户列表"
+// @Success 200 {object} response.Response{data=object,msg=string} "获取成功"
+// @Router /qmUser/login [POST]
+func (a *qmUser) Login(c *gin.Context) {
+	var loginReq request.QmUser
+	err := c.ShouldBindJSON(&loginReq)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	// 请添加自己的业务逻辑
+	user, err := serviceQmUser.Login(loginReq.Username, loginReq.Password)
+	if err != nil {
+		global.GVA_LOG.Error("失败!", zap.Error(err))
+		response.FailWithMessage("失败", c)
+		return
+	}
+	token, claims, err := utils.LoginToken(user)
+	if err != nil {
+		global.GVA_LOG.Error("失败!", zap.Error(err))
+		response.FailWithMessage("失败", c)
+		return
+	}
+
+	response.OkWithData(gin.H{
+		"token":     token,
+		"expiresAt": claims.RegisteredClaims.ExpiresAt,
+		"user":      user,
+	}, c)
+}
+
+// GetUserInfo 等待开发的的用户接口
+// @Tags QmUser
+// @Summary 等待开发的的用户接口
+// @accept application/json
+// @Produce application/json
+// @Param data query request.QmUserSearch true "分页获取用户列表"
+// @Success 200 {object} response.Response{data=object,msg=string} "获取成功"
+// @Router /qmUser/getUserInfo [GET]
+func (a *qmUser) GetUserInfo(c *gin.Context) {
+	// 请添加自己的业务逻辑
+	id := utils.GetUserID(c)
+	if id == 0 {
+		response.FailWithMessage("获取失败", c)
+		return
+	}
+	user, err := serviceQmUser.GetUserInfo(id)
+	if err != nil {
+		global.GVA_LOG.Error("失败!", zap.Error(err))
+		response.FailWithMessage("失败", c)
+		return
+	}
+	response.OkWithData(user, c)
 }

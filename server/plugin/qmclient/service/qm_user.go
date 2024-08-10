@@ -102,3 +102,24 @@ func (s *qmUser) AdminChangePassword(req request.AdminChangePasswordReq) (err er
 	db := global.GVA_DB.Model(&model.QmUser{}).Where("id = ?", req.UserID).Update("password", newPwd)
 	return db.Error
 }
+
+// Login 请实现方法
+// Author [yourname](https://github.com/yourname)
+func (s *qmUser) Login(username string, password string) (user model.QmUser, err error) {
+	err = global.GVA_DB.First(&user, "username = ?", username).Error
+	if err != nil {
+		return user, errors.New("用户不存在")
+	}
+	ok := utils.BcryptCheck(password, user.Password)
+	if !ok {
+		return user, errors.New("密码错误")
+	}
+	return
+}
+
+// GetUserInfo 请实现方法
+// Author [yourname](https://github.com/yourname)
+func (s *qmUser) GetUserInfo(id uint) (user model.QmUser, err error) {
+	err = global.GVA_DB.First(&user, id).Error
+	return
+}
