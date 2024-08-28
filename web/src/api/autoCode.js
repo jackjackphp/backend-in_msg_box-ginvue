@@ -12,8 +12,7 @@ export const createTemp = (data) => {
   return service({
     url: '/autoCode/createTemp',
     method: 'post',
-    data,
-    responseType: 'blob'
+    data
   })
 }
 
@@ -167,3 +166,22 @@ export const addFunc = (data) => {
     data
   })
 }
+
+export const initMenu = (data) => {
+  return service({
+    url: '/autoCode/initMenu',
+    method: 'post',
+    data
+  })
+}
+
+export const initAPI = (data) => {
+  return service({
+    url: '/autoCode/initAPI',
+    method: 'post',
+    data
+  })
+}
+
+
+
