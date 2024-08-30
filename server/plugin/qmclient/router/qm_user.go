@@ -28,6 +28,7 @@ func (r *qmUser) Init(public *gin.RouterGroup, private *gin.RouterGroup) {
 		group := public.Group("qmUser")
 		group.POST("register", apiQmUser.Register)
 		group.POST("login", apiQmUser.Login)
+		group.POST("logout", apiQmUser.Logout)
 	}
 
 }

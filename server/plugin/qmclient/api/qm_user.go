@@ -9,6 +9,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"time"
 )
 
 var QmUser = new(qmUser)
@@ -254,7 +255,8 @@ func (a *qmUser) Login(c *gin.Context) {
 		response.FailWithMessage("失败", c)
 		return
 	}
-
+	maxAge := int(claims.RegisteredClaims.ExpiresAt.Unix() - time.Now().Unix())
+	utils.SetToken(c, token, maxAge)
 	response.OkWithData(gin.H{
 		"token":     token,
 		"expiresAt": claims.RegisteredClaims.ExpiresAt,
@@ -284,4 +286,17 @@ func (a *qmUser) GetUserInfo(c *gin.Context) {
 		return
 	}
 	response.OkWithData(user, c)
+}
+
+// GetUserInfo 等待开发的的用户接口
+// @Tags QmUser
+// @Summary 等待开发的的用户接口
+// @accept application/json
+// @Produce application/json
+// @Param data query request.QmUserSearch true "分页获取用户列表"
+// @Success 200 {object} response.Response{data=object,msg=string} "获取成功"
+// @Router /qmUser/logout [GET]
+func (a *qmUser) Logout(c *gin.Context) {
+	utils.ClearToken(c)
+	response.Ok(c)
 }

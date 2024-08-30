@@ -23,4 +23,8 @@ func (p *plugin) Register(group *gin.Engine) {
 	initialize.Viper()
 	initialize.Gorm(ctx)
 	initialize.Router(group)
+	// 安装插件时候自动注册的api数据请到下方法.Api方法中实现并添加如下方法
+	initialize.Api(ctx)
+	// 安装插件时候自动注册的api数据请到下方法.Menu方法中实现并添加如下方法
+	initialize.Menu(ctx)
 }
